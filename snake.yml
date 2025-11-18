@@ -1,0 +1,29 @@
+name: Generate contribution-snake
+
+on:
+  workflow_dispatch: {}
+  schedule:
+    # runs every day at 00:30 UTC (adjust if you want)
+    - cron: '30 0 * * *'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Generate snake images
+        uses: Platane/snk@v3
+        with:
+          # reads contributions for the repository owner (your profile repo)
+          github_user_name: ${{ github.repository_owner }}
+          # list files to generate (one per line). You can add query params for palette/colors.
+          outputs: |
+            output/github-contribution-grid-snake.svg
+            output/github-contribution-grid-snake-dark.svg?palette=github-dark
+            output/github-contribution-grid-snake.gif?color_snake=orange
+      - name: Commit generated output files to branch
+        uses: EndBug/add-and-commit@v9
+        with:
+          author_name: platane-snk
+          author_email: snk@users.noreply.github.com
+          message: "chore: update contribution-snake"
+          add: 'output/**'
